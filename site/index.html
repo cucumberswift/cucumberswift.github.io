@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CucumberSwift · Cucumber and Gherkin for Swift</title>
+<meta name="description" content="CucumberSwift is a lightweight, Swift-only Cucumber implementation for iOS, tvOS and macOS. Write behaviour in Gherkin and run it as XCTest tests in Xcode.">
+<link rel="canonical" href="https://cucumberswift.org/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CucumberSwift">
+<meta property="og:title" content="CucumberSwift · Cucumber and Gherkin for Swift">
+<meta property="og:description" content="A lightweight, Swift-only Cucumber implementation for iOS, tvOS and macOS.">
+<meta property="og:url" content="https://cucumberswift.org/">
+<meta property="og:image" content="https://cucumberswift.org/assets/logo.png">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#FFFFFF">
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js" defer></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "CucumberSwift",
+  "description": "A lightweight, Swift-only Cucumber implementation for iOS, tvOS and macOS.",
+  "url": "https://cucumberswift.org/",
+  "codeRepository": "https://github.com/cucumberswift/CucumberSwift",
+  "programmingLanguage": "Swift",
+  "license": "https://opensource.org/licenses/MIT"
+}
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="brand" href="/">
+      <img class="brand__mark" src="/assets/logo.png" alt="" width="36" height="36">
+      <span class="brand__name">Cucumber<span class="brand__swift">Swift</span></span>
+    </a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" hidden>
+      <span class="visually-hidden">Menu</span>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
+      <ul class="site-nav__list">
+        <li><a class="site-nav__link" href="/docs/">Docs</a></li>
+        <li><a class="site-nav__link" href="/docs/expressions/">Expressions</a></li>
+        <li><a class="site-nav__link" href="#install">Install</a></li>
+        <li><a class="site-nav__link" href="#community">Community</a></li>
+        <li><a class="button button--secondary button--small" href="https://github.com/cucumberswift/CucumberSwift">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.2 4.2 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>
+          GitHub</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="container hero__inner">
+      <div class="hero__text">
+        <p class="eyebrow">Cucumber for iOS, tvOS and macOS</p>
+        <h1 class="hero__title" id="hero-title">Describe it in Gherkin. <span class="hero__title-accent">Prove it in Swift.</span></h1>
+        <p class="lead">CucumberSwift is a lightweight, Swift-only Cucumber implementation. Your <code>.feature</code> files run as XCTest tests, right alongside the rest of your suite in Xcode.</p>
+        <div class="actions">
+          <a class="button button--primary" href="/docs/">Get started
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="button button--secondary" href="#install">Install</a>
+        </div>
+        <ul class="facts" aria-label="At a glance">
+          <li>MIT licensed</li>
+          <li>iOS 13+</li>
+          <li>macOS 10.15+</li>
+          <li>tvOS 13+</li>
+        </ul>
+      </div>
+
+      <div class="hero__code">
+        <figure class="code code--light">
+          <figcaption class="code__bar"><span class="code__dot code__dot--green" aria-hidden="true"></span>Features/Checkout.feature</figcaption>
+<pre><code><span class="t-kw">Feature:</span> Checkout
+
+  <span class="t-kw">Scenario:</span> Paying with a saved card
+    <span class="t-kw">Given</span> I have <span class="t-num">2</span> items in my cart
+    <span class="t-kw">When</span> I pay with my saved card
+    <span class="t-kw">Then</span> I see <span class="t-str">"Order placed"</span></code></pre>
+        </figure>
+        <figure class="code code--dark">
+          <figcaption class="code__bar"><span class="code__dot code__dot--orange" aria-hidden="true"></span>CheckoutSteps.swift</figcaption>
+<pre><code><span class="t-kw">Given</span>(<span class="t-str">"I have {int} items in my cart"</span>
+      <span class="t-key">as</span> <span class="t-type">CucumberExpression</span>) { match, _ <span class="t-key">in</span>
+    cart.fill(with: <span class="t-key">try</span> match.first(\.int))
+}
+<span class="t-kw">When</span>(<span class="t-str">"I pay with my saved card"</span>) { _, _ <span class="t-key">in</span>
+    checkout.payWithSavedCard()
+}
+<span class="t-kw">Then</span>(<span class="t-str">"I see {string}"</span>
+     <span class="t-key">as</span> <span class="t-type">CucumberExpression</span>) { match, _ <span class="t-key">in</span>
+    XCTAssertEqual(banner.text,
+                   <span class="t-key">try</span> match.first(\.string))
+}</code></pre>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="how-title">
+    <div class="container">
+      <div class="section__head">
+        <p class="eyebrow">How it works</p>
+        <h2 class="section__title" id="how-title">From a sentence to a passing test in three steps</h2>
+      </div>
+      <ol class="steps">
+        <li class="card step">
+          <span class="step__number" aria-hidden="true">1</span>
+          <h3 class="step__title">Describe the behaviour</h3>
+          <p>Write scenarios in <code>.feature</code> files that product, QA and engineering can all read. Keywords are localised, so the Gherkin can be in your team's language.</p>
+        </li>
+        <li class="card step">
+          <span class="step__number" aria-hidden="true">2</span>
+          <h3 class="step__title">Match each step</h3>
+          <p>Bind steps with <code>Given</code>, <code>When</code> and <code>Then</code>, using Cucumber Expressions with type-safe parameters, or regular expressions.</p>
+        </li>
+        <li class="card step">
+          <span class="step__number step__number--red" aria-hidden="true">3</span>
+          <h3 class="step__title">Run it with XCTest</h3>
+          <p>Scenarios run as ordinary tests. Steps you haven't written yet come with generated stubs to paste into your step definitions.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="features-title">
+    <div class="container split">
+      <div class="split__aside">
+        <p class="eyebrow">What's included</p>
+        <h2 class="section__title" id="features-title">Small on purpose</h2>
+        <p class="body-2">CucumberSwift was written to be easy to install and easy to use. It covers what a Swift team needs from Cucumber, and not much else.</p>
+      </div>
+      <ul class="features">
+        <li class="feature">
+          <svg class="feature__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H7a2 2 0 0 0-2 2v5a2 2 0 0 1-2 2 2 2 0 0 1 2 2v5a2 2 0 0 0 2 2h1M16 3h1a2 2 0 0 1 2 2v5a2 2 0 0 0 2 2 2 2 0 0 0-2 2v5a2 2 0 0 1-2 2h-1"/></svg>
+          <div>
+            <h3 class="feature__title">Cucumber Expressions</h3>
+            <p>Readable patterns like <code>{int}</code> and <code>{string}</code>, plus your own typed parameters.</p>
+          </div>
+        </li>
+        <li class="feature">
+          <svg class="feature__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v6M12 15v6M5 12H3M21 12h-2"/><circle cx="12" cy="12" r="3"/></svg>
+          <div>
+            <h3 class="feature__title">Six hooks</h3>
+            <p>Before and after each feature, scenario and step, for setup and clean-up.</p>
+          </div>
+        </li>
+        <li class="feature">
+          <svg class="feature__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg>
+          <div>
+            <h3 class="feature__title">JSON reports</h3>
+            <p>A Cucumber JSON report written in real time while your tests run.</p>
+          </div>
+        </li>
+        <li class="feature">
+          <svg class="feature__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+          <div>
+            <h3 class="feature__title">Localised Gherkin</h3>
+            <p>Keyword functions in every Gherkin language, such as <code>ES_Dado</code> for Spanish.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="install" aria-labelledby="install-title">
+    <div class="container">
+      <div class="panel split">
+        <div class="split__aside">
+          <p class="eyebrow">Install</p>
+          <h2 class="section__title" id="install-title">Add it to your test target</h2>
+          <p class="body-2">In Xcode, choose File › Add Package Dependencies… and paste the repository URL. Or add it to <code>Package.swift</code>. Carthage is supported too.</p>
+          <a class="link-arrow" href="/docs/">Follow the step-by-step tutorial
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        </div>
+        <div class="tabs" data-tabs>
+          <div class="tabs__list" role="tablist" aria-label="Install method" hidden>
+            <button class="tabs__tab" type="button" role="tab" id="tab-spm" aria-controls="panel-spm" aria-selected="true">Swift Package Manager</button>
+            <button class="tabs__tab" type="button" role="tab" id="tab-carthage" aria-controls="panel-carthage" aria-selected="false" tabindex="-1">Carthage</button>
+          </div>
+          <div class="tabs__panel" id="panel-spm" role="tabpanel" aria-labelledby="tab-spm">
+            <h3 class="tabs__heading">Swift Package Manager</h3>
+            <figure class="code code--dark" data-copy>
+              <figcaption class="code__bar">Package.swift
+                <button class="code__copy" type="button" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="code__copy-label">Copy</span></button></figcaption>
+<pre><code>dependencies: [
+    .package(url: <span class="t-str">"https://github.com/cucumberswift/CucumberSwift"</span>,
+             from: <span class="t-str">"5.0.0"</span>)
+],
+targets: [
+    .testTarget(name: <span class="t-str">"AppTests"</span>,
+                dependencies: [<span class="t-str">"CucumberSwift"</span>])
+]</code></pre>
+            </figure>
+          </div>
+          <div class="tabs__panel" id="panel-carthage" role="tabpanel" aria-labelledby="tab-carthage">
+            <h3 class="tabs__heading">Carthage</h3>
+            <figure class="code code--dark" data-copy>
+              <figcaption class="code__bar">Cartfile
+                <button class="code__copy" type="button" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="code__copy-label">Copy</span></button></figcaption>
+<pre><code><span class="t-kw">github</span> <span class="t-str">"cucumberswift/CucumberSwift"</span></code></pre>
+            </figure>
+            <figure class="code code--dark" data-copy>
+              <figcaption class="code__bar">Terminal
+                <button class="code__copy" type="button" hidden><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg><span class="code__copy-label">Copy</span></button></figcaption>
+<pre><code>carthage update &amp;&amp; carthage build --platform iOS</code></pre>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="docs-title">
+    <div class="container">
+      <div class="section__head">
+        <p class="eyebrow">Documentation</p>
+        <h2 class="section__title" id="docs-title">Read the docs</h2>
+        <p class="body-2">The docs follow the latest stable release. Every major version keeps its own copy.</p>
+      </div>
+      <div class="doc-cards">
+        <a class="card card--link doc-card doc-card--raised" href="/docs/">
+          <span class="doc-card__top"><span class="badge badge--green">Latest stable</span>
+            <svg class="doc-card__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <span class="doc-card__title">CucumberSwift</span>
+          <span class="doc-card__text">Tutorials for SPM and Carthage, step matching, hooks, reports and the full API reference.</span>
+          <span class="doc-card__path">/docs/</span>
+        </a>
+        <a class="card card--link doc-card" href="/docs/expressions/">
+          <span class="doc-card__top"><span class="badge">Companion library</span>
+            <svg class="doc-card__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          <span class="doc-card__title">CucumberSwiftExpressions</span>
+          <span class="doc-card__text">The Cucumber Expressions parser behind step matching, and how to write custom parameters.</span>
+          <span class="doc-card__path">/docs/expressions/</span>
+        </a>
+        <div class="card doc-card">
+          <span class="doc-card__top"><span class="badge">Older versions</span></span>
+          <h3 class="doc-card__title">Docs by major version</h3>
+          <span class="doc-card__text">Pinned to an older release? Each major keeps the docs of its latest release.</span>
+          <!-- The version list comes from /docs/versions.json once the docs are added (cucumberswift/CucumberSwift#152). -->
+          <ul class="versions">
+            <li><a class="version" href="/docs/5.x/">5.x</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--last" id="community" aria-labelledby="community-title">
+    <div class="container split">
+      <div class="split__aside">
+        <p class="eyebrow">Community</p>
+        <h2 class="section__title" id="community-title">Built in the open</h2>
+        <p class="body-2">Ask questions, report bugs and propose changes on GitHub. Everyone taking part follows the code of conduct.</p>
+      </div>
+      <ul class="link-list">
+        <li><a href="https://github.com/cucumberswift/CucumberSwift/discussions">Discussions<span>Questions and ideas</span></a></li>
+        <li><a href="https://github.com/cucumberswift/CucumberSwift/issues">Issues<span>Bugs and feature requests</span></a></li>
+        <li><a href="https://github.com/cucumberswift/CucumberSwift/blob/main/CONTRIBUTING.md">Contributing guide<span>How to send a change</span></a></li>
+        <li><a href="https://github.com/cucumberswift/CucumberSwift/blob/main/CODE_OF_CONDUCT.md">Code of conduct<span>How we treat each other</span></a></li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="site-footer__grid">
+      <div class="site-footer__about">
+        <a class="brand brand--reversed" href="/">
+          <img class="brand__mark" src="/assets/logo.png" alt="" width="40" height="40">
+          <span class="brand__name">Cucumber<span class="brand__swift">Swift</span></span>
+        </a>
+        <p>A lightweight, Swift-only Cucumber implementation for iOS, tvOS and macOS.</p>
+      </div>
+      <nav class="site-footer__col" aria-labelledby="footer-docs">
+        <h2 class="site-footer__heading" id="footer-docs">Docs</h2>
+        <ul>
+          <li><a href="/docs/">CucumberSwift</a></li>
+          <li><a href="/docs/expressions/">Expressions</a></li>
+          <li><a href="/docs/5.x/">Older versions</a></li>
+        </ul>
+      </nav>
+      <nav class="site-footer__col" aria-labelledby="footer-project">
+        <h2 class="site-footer__heading" id="footer-project">Project</h2>
+        <ul>
+          <li><a href="https://github.com/cucumberswift/CucumberSwift">GitHub</a></li>
+          <li><a href="https://github.com/cucumberswift/CucumberSwift/releases">Releases</a></li>
+          <li><a href="https://github.com/cucumberswift/CucumberSwiftExpressions">Expressions repo</a></li>
+          <li><a href="https://github.com/cucumberswift/CucumberSwift/security/policy">Security policy</a></li>
+        </ul>
+      </nav>
+      <nav class="site-footer__col" aria-labelledby="footer-community">
+        <h2 class="site-footer__heading" id="footer-community">Community</h2>
+        <ul>
+          <li><a href="https://github.com/cucumberswift/CucumberSwift/discussions">Discussions</a></li>
+          <li><a href="https://github.com/cucumberswift/CucumberSwift/issues">Issues</a></li>
+          <li><a href="https://github.com/cucumberswift/CucumberSwift/blob/main/CONTRIBUTING.md">Contributing</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="site-footer__legal">
+      <p>Released under the MIT License.</p>
+      <p>Gherkin languages and test data from the Cucumber project · Localisation by SwiftGen · CI powered by MacStadium</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
