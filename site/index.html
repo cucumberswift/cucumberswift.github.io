@@ -94,15 +94,13 @@
         </figure>
         <figure class="code code--dark">
           <figcaption class="code__bar"><span class="code__dot code__dot--orange" aria-hidden="true"></span>CheckoutSteps.swift</figcaption>
-<pre><code><span class="t-kw">Given</span>(<span class="t-str">"I have {int} items in my cart"</span>
-      <span class="t-key">as</span> <span class="t-type">CucumberExpression</span>) { match, _ <span class="t-key">in</span>
+<pre><code><span class="t-kw">Given</span>(<span class="t-str">"I have {int} items in my cart"</span>) { match, _ <span class="t-key">in</span>
     cart.fill(with: <span class="t-key">try</span> match.first(\.int))
 }
 <span class="t-kw">When</span>(<span class="t-str">"I pay with my saved card"</span>) { _, _ <span class="t-key">in</span>
     checkout.payWithSavedCard()
 }
-<span class="t-kw">Then</span>(<span class="t-str">"I see {string}"</span>
-     <span class="t-key">as</span> <span class="t-type">CucumberExpression</span>) { match, _ <span class="t-key">in</span>
+<span class="t-kw">Then</span>(<span class="t-str">"I see {string}"</span>) { match, _ <span class="t-key">in</span>
     XCTAssertEqual(banner.text,
                    <span class="t-key">try</span> match.first(\.string))
 }</code></pre>
