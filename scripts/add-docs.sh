@@ -10,11 +10,18 @@
 #   /<path>/X.x/  the highest stable release of major X
 #   /<path>/      the highest stable release overall
 #
-# Nothing is rebuilt. A zip that was built for another path is skipped, and the
-# next lower release is used. Releases without the assets are skipped.
+# <path> is help for CucumberSwift and help/expressions for CucumberSwiftExpressions.
+# The docs used to be served under /docs; every /docs/... page redirects to the
+# same page under /help/.
+#
+# Nothing is rebuilt. Releases are immutable, so docs built for the former /docs
+# paths (5.0.10, 0.0.8) are moved to /help when they are unpacked: DocC bakes the
+# path only into each page's index.html shell, which is rewritten. A zip built for
+# any other path is skipped, and the next lower release is used. Releases without
+# the assets are skipped.
 #
 # It also writes redirect pages for the old documentation URLs, a fallback in
-# 404.html, /docs/versions.json, sitemap.xml and robots.txt.
+# 404.html, /help/versions.json, sitemap.xml and robots.txt.
 #
 # Needs gh (with GH_TOKEN), jq, unzip and perl. A failed API call stops the
 # script, so a site with docs missing is never deployed.
@@ -23,10 +30,10 @@ set -euo pipefail
 out=${1:?usage: add-docs.sh <site directory>}
 site_url=${SITE_URL:-https://cucumberswift.org}
 
-# repository | path on the site | DocC module | old URL prefixes (space separated; "-" is the site root)
+# repository | path on the site | former path | DocC module | old URL prefixes (space separated; "-" is the site root)
 packages=(
-  "${CUCUMBERSWIFT_REPO:-cucumberswift/CucumberSwift}|docs|cucumberswift|CucumberSwift -"
-  "${EXPRESSIONS_REPO:-cucumberswift/CucumberSwiftExpressions}|docs/expressions|cucumberswiftexpressions|CucumberSwiftExpressions"
+  "${CUCUMBERSWIFT_REPO:-cucumberswift/CucumberSwift}|help|docs|cucumberswift|CucumberSwift -"
+  "${EXPRESSIONS_REPO:-cucumberswift/CucumberSwiftExpressions}|help/expressions|docs/expressions|cucumberswiftexpressions|CucumberSwiftExpressions"
 )
 
 work=$(mktemp -d)
@@ -42,21 +49,29 @@ base_url() {
 }
 
 # Downloads <asset> of the first of <tags> (highest first) that was built for
-# <base>, unpacks it into <dir> and prints its tag. Prints nothing if none fits.
+# <base>, or for <former> (then moved to <base>), unpacks it into <dir> and
+# prints its tag. Prints nothing if none fits.
 publish_first() {
-  local repo=$1 asset=$2 base=$3 dir=$4
-  shift 4
-  local tag zip
+  local repo=$1 asset=$2 base=$3 former=$4 dir=$5
+  shift 5
+  local tag zip built
   for tag in "$@"; do
     zip="$work/$tag-$asset"
     gh release download "$tag" --repo "$repo" --pattern "$asset" --output "$zip" --clobber < /dev/null
-    if [ "$(base_url "$zip")" = "$base" ]; then
+    built=$(base_url "$zip")
+    if [ "$built" = "$base" ] || [ "$built" = "$former" ]; then
       mkdir -p "$dir"
       unzip -q -o "$zip" -d "$dir"
+      if [ "$built" = "$former" ]; then
+        # Only the page shells carry the path, as "<former>... in attributes and baseUrl.
+        # shellcheck disable=SC2016 # $ENV{...} is expanded by perl, not the shell
+        find "$dir" -name index.html -print0 | FROM="\"$former" TO="\"$base" xargs -0 perl -pi -e 's/\Q$ENV{FROM}\E/$ENV{TO}/g'
+        echo "$repo $tag: $asset built for $former, moved to $base." >&2
+      fi
       echo "$tag"
       return
     fi
-    echo "::warning::$repo $tag: $asset is built for $(base_url "$zip"), not $base. Skipped." >&2
+    echo "::warning::$repo $tag: $asset is built for $built, not $base. Skipped." >&2
   done
 }
 
@@ -92,7 +107,7 @@ pages() {
 }
 
 for package in "${packages[@]}"; do
-  IFS='|' read -r repo path module prefixes <<< "$package"
+  IFS='|' read -r repo path former module prefixes <<< "$package"
   echo "== $repo → /$path/"
 
   # Stable releases that carry both assets, lowest version first. Fetched on
@@ -109,7 +124,7 @@ for package in "${packages[@]}"; do
 
   # /<path>/: the highest stable release overall.
   # shellcheck disable=SC2046 # one tag per word
-  root=$(publish_first "$repo" docs-root.zip "/$path/" "$out/$path" $(sort -rV <<< "$tags"))
+  root=$(publish_first "$repo" docs-root.zip "/$path/" "/$former/" "$out/$path" $(sort -rV <<< "$tags"))
   if [ -z "$root" ]; then
     echo "::warning::$repo has no docs built for /$path/. /$path/ is not published."
     continue
@@ -123,7 +138,7 @@ for package in "${packages[@]}"; do
   majors='[]'
   while read -r major; do
     # shellcheck disable=SC2046
-    tag=$(publish_first "$repo" docs-major.zip "/$path/$major.x/" "$out/$path/$major.x" \
+    tag=$(publish_first "$repo" docs-major.zip "/$path/$major.x/" "/$former/$major.x/" "$out/$path/$major.x" \
       $(grep "^$major\." <<< "$tags" | sort -rV))
     if [ -z "$tag" ]; then continue; fi
     echo "/$path/$major.x/: $tag"
@@ -141,7 +156,7 @@ for package in "${packages[@]}"; do
     fi
   done < <(cut -d. -f1 <<< "$tags" | sort -un)
 
-  # Old URLs, e.g. /CucumberSwift/documentation/cucumberswift/ → /docs/documentation/cucumberswift/.
+  # Old URLs, e.g. /CucumberSwift/documentation/cucumberswift/ → /help/documentation/cucumberswift/.
   for prefix in $prefixes; do
     if [ "$prefix" = "-" ]; then legacy=""; else legacy="/$prefix"; fi
     pages "$out/$path" | while read -r page; do
@@ -159,6 +174,20 @@ for package in "${packages[@]}"; do
     '. + [{name: $n, version: $v, path: $p, majors: $m}]' <<< "$versions")
 done
 
+# /docs/... was the documentation path until #161: each page redirects to the same page under /help/.
+if [ -d "$out/help" ]; then
+  (cd "$out/help" && find . -name index.html | sed 's|^\./||; s|index.html$||') | while read -r page; do
+    # If the /help page is itself a redirect (e.g. /help/ itself), go straight to its target.
+    target=$(sed -n 's/.*http-equiv="refresh" content="0; url=\([^"]*\)".*/\1/p' "$out/help/${page}index.html" | head -n 1)
+    redirect_page "$out/docs/${page}index.html" "${target:-/help/$page}"
+  done
+  # Most specific first, so /docs/expressions/ is matched before /docs/.
+  if [ -d "$out/help/expressions" ]; then
+    fallback=("[\"/docs/expressions/\", \"/help/expressions/documentation/cucumberswiftexpressions/\"]" "${fallback[@]}")
+  fi
+  fallback+=("[\"/docs/\", \"/help/documentation/cucumberswift/\"]")
+fi
+
 # Old pages that no longer exist go to their package's documentation.
 if [ ${#fallback[@]} -gt 0 ] && [ -f "$out/404.html" ]; then
   map=$(IFS=,; echo "${fallback[*]}")
@@ -166,8 +195,10 @@ if [ ${#fallback[@]} -gt 0 ] && [ -f "$out/404.html" ]; then
   SCRIPT="$script" perl -0pi -e 's|</body>|$ENV{SCRIPT}\n</body>|' "$out/404.html"
 fi
 
-mkdir -p "$out/docs"
-jq '{packages: .}' <<< "$versions" > "$out/docs/versions.json"
+mkdir -p "$out/help" "$out/docs"
+jq '{packages: .}' <<< "$versions" > "$out/help/versions.json"
+# The landing page read /docs/versions.json before #161.
+cp "$out/help/versions.json" "$out/docs/versions.json"
 
 {
   echo '<?xml version="1.0" encoding="UTF-8"?>'

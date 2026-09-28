@@ -48,7 +48,7 @@ jobs:
           fi
           # These paths belong to the documentation and to redirects from old URLs.
           status=0
-          for reserved in docs CucumberSwift CucumberSwiftExpressions documentation tutorials sitemap.xml robots.txt; do
+          for reserved in help docs CucumberSwift CucumberSwiftExpressions documentation tutorials sitemap.xml robots.txt; do
             if [ -e "site/$reserved" ]; then
               echo "::error::site/$reserved is reserved for the documentation."
               status=1
@@ -75,8 +75,8 @@ jobs:
         run: |
           changed=true
           if [ "$EVENT" = schedule ] &&
-             live=$(curl -sf --max-time 30 https://cucumberswift.org/docs/versions.json) &&
-             [ "$(jq -S . <<< "$live")" = "$(jq -S . _site/docs/versions.json)" ]; then
+             live=$(curl -sf --max-time 30 https://cucumberswift.org/help/versions.json) &&
+             [ "$(jq -S . <<< "$live")" = "$(jq -S . _site/help/versions.json)" ]; then
             changed=false
             echo "The published versions are unchanged. Nothing to deploy."
           fi
