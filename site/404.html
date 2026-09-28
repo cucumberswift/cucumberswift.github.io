@@ -9,7 +9,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@700;800&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600&amp;display=swap">
+<script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}</script>
 <link rel="stylesheet" href="/assets/site.css">
+<script src="/assets/site.js" defer></script>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
@@ -20,7 +22,16 @@
       <img class="brand__mark" src="/assets/logo.png" alt="" width="36" height="36">
       <span class="brand__name">Cucumber<span class="brand__swift">Swift</span></span>
     </a>
-    <nav aria-label="Main">
+    <button class="theme-toggle" type="button" aria-pressed="false" hidden>
+      <span class="visually-hidden">Dark theme</span>
+      <svg class="theme-toggle__moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+      <svg class="theme-toggle__sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" hidden>
+      <span class="visually-hidden">Menu</span>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav class="site-nav" id="site-nav" aria-label="Main">
       <ul class="site-nav__list">
         <li><a class="site-nav__link" href="/help/documentation/cucumberswift/" target="_blank" rel="noopener">Docs<span class="visually-hidden"> (opens in a new tab)</span></a></li>
         <li><a class="site-nav__link" href="https://github.com/cucumberswift/CucumberSwift" target="_blank" rel="noopener">GitHub<span class="visually-hidden"> (opens in a new tab)</span></a></li>
@@ -48,7 +59,7 @@
     </div>
     <div class="not-found__art" aria-hidden="true">
       <svg width="360" height="360" viewBox="0 0 360 360">
-        <circle cx="180" cy="180" r="170" fill="#EEFBEF"/>
+        <circle class="not-found__disc" cx="180" cy="180" r="170"/>
         <g transform="translate(180 180)" fill="#00A818">
           <ellipse cx="0" cy="-104" rx="22" ry="34"/>
           <ellipse cx="0" cy="-104" rx="22" ry="34" transform="rotate(45)"/>
@@ -59,7 +70,7 @@
           <ellipse cx="0" cy="-104" rx="22" ry="34" transform="rotate(270)"/>
           <ellipse cx="0" cy="-104" rx="22" ry="34" transform="rotate(315)" fill="none" stroke="#F95A2C" stroke-width="3" stroke-dasharray="6 6"/>
         </g>
-        <text x="180" y="196" text-anchor="middle" fill="#0F1A12" font-family="'Hanken Grotesk', sans-serif" font-weight="800" font-size="44">404</text>
+        <text class="not-found__code" x="180" y="196" text-anchor="middle" font-family="'Hanken Grotesk', sans-serif" font-weight="800" font-size="44">404</text>
       </svg>
     </div>
   </div>

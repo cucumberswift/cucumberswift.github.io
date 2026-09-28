@@ -1,8 +1,39 @@
 // Progressive enhancement for cucumberswift.org. Every section works without
 // this file: the menu stays open, both install methods show, and the copy
-// buttons stay hidden.
+// buttons and the theme button stay hidden.
 
 document.documentElement.classList.add('js');
+
+// Theme button. The page follows the system setting until the visitor picks a
+// theme. A pick that matches the system setting is forgotten, so the page
+// follows the system again. A script in each page's <head> applies a saved
+// pick before the first paint.
+const themeButton = document.querySelector('.theme-toggle');
+if (themeButton) {
+  const root = document.documentElement;
+  const systemDark = matchMedia('(prefers-color-scheme: dark)');
+  const themeColors = [...document.querySelectorAll('meta[name="theme-color"]')].map((meta) => [meta, meta.content]);
+  const systemTheme = () => (systemDark.matches ? 'dark' : 'light');
+  const currentTheme = () => root.dataset.theme ?? systemTheme();
+  const sync = () => {
+    themeButton.setAttribute('aria-pressed', String(currentTheme() === 'dark'));
+    const picked = getComputedStyle(root).getPropertyValue('--surface-raised').trim();
+    for (const [meta, content] of themeColors) meta.content = root.dataset.theme ? picked : content;
+  };
+  themeButton.hidden = false;
+  sync();
+  themeButton.addEventListener('click', () => {
+    const next = currentTheme() === 'dark' ? 'light' : 'dark';
+    if (next === systemTheme()) delete root.dataset.theme;
+    else root.dataset.theme = next;
+    try {
+      if (root.dataset.theme) localStorage.setItem('theme', next);
+      else localStorage.removeItem('theme');
+    } catch {}
+    sync();
+  });
+  systemDark.addEventListener('change', sync);
+}
 
 // Menu button on narrow screens.
 const menuButton = document.querySelector('.menu-toggle');
