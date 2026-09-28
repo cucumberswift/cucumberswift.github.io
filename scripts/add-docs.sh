@@ -14,8 +14,11 @@
 # The docs used to be served under /docs; every /docs/... page redirects to the
 # same page under /help/.
 #
-# Nothing is rebuilt. A zip that was built for another path is skipped, and the
-# next lower release is used. Releases without the assets are skipped.
+# Nothing is rebuilt. Releases are immutable, so docs built for the former /docs
+# paths (5.0.10, 0.0.8) are moved to /help when they are unpacked: DocC bakes the
+# path only into each page's index.html shell, which is rewritten. A zip built for
+# any other path is skipped, and the next lower release is used. Releases without
+# the assets are skipped.
 #
 # It also writes redirect pages for the old documentation URLs, a fallback in
 # 404.html, /help/versions.json, sitemap.xml and robots.txt.
@@ -27,10 +30,10 @@ set -euo pipefail
 out=${1:?usage: add-docs.sh <site directory>}
 site_url=${SITE_URL:-https://cucumberswift.org}
 
-# repository | path on the site | DocC module | old URL prefixes (space separated; "-" is the site root)
+# repository | path on the site | former path | DocC module | old URL prefixes (space separated; "-" is the site root)
 packages=(
-  "${CUCUMBERSWIFT_REPO:-cucumberswift/CucumberSwift}|help|cucumberswift|CucumberSwift -"
-  "${EXPRESSIONS_REPO:-cucumberswift/CucumberSwiftExpressions}|help/expressions|cucumberswiftexpressions|CucumberSwiftExpressions"
+  "${CUCUMBERSWIFT_REPO:-cucumberswift/CucumberSwift}|help|docs|cucumberswift|CucumberSwift -"
+  "${EXPRESSIONS_REPO:-cucumberswift/CucumberSwiftExpressions}|help/expressions|docs/expressions|cucumberswiftexpressions|CucumberSwiftExpressions"
 )
 
 work=$(mktemp -d)
@@ -46,21 +49,29 @@ base_url() {
 }
 
 # Downloads <asset> of the first of <tags> (highest first) that was built for
-# <base>, unpacks it into <dir> and prints its tag. Prints nothing if none fits.
+# <base>, or for <former> (then moved to <base>), unpacks it into <dir> and
+# prints its tag. Prints nothing if none fits.
 publish_first() {
-  local repo=$1 asset=$2 base=$3 dir=$4
-  shift 4
-  local tag zip
+  local repo=$1 asset=$2 base=$3 former=$4 dir=$5
+  shift 5
+  local tag zip built
   for tag in "$@"; do
     zip="$work/$tag-$asset"
     gh release download "$tag" --repo "$repo" --pattern "$asset" --output "$zip" --clobber < /dev/null
-    if [ "$(base_url "$zip")" = "$base" ]; then
+    built=$(base_url "$zip")
+    if [ "$built" = "$base" ] || [ "$built" = "$former" ]; then
       mkdir -p "$dir"
       unzip -q -o "$zip" -d "$dir"
+      if [ "$built" = "$former" ]; then
+        # Only the page shells carry the path, as "<former>... in attributes and baseUrl.
+        # shellcheck disable=SC2016 # $ENV{...} is expanded by perl, not the shell
+        find "$dir" -name index.html -print0 | FROM="\"$former" TO="\"$base" xargs -0 perl -pi -e 's/\Q$ENV{FROM}\E/$ENV{TO}/g'
+        echo "$repo $tag: $asset built for $former, moved to $base." >&2
+      fi
       echo "$tag"
       return
     fi
-    echo "::warning::$repo $tag: $asset is built for $(base_url "$zip"), not $base. Skipped." >&2
+    echo "::warning::$repo $tag: $asset is built for $built, not $base. Skipped." >&2
   done
 }
 
@@ -96,7 +107,7 @@ pages() {
 }
 
 for package in "${packages[@]}"; do
-  IFS='|' read -r repo path module prefixes <<< "$package"
+  IFS='|' read -r repo path former module prefixes <<< "$package"
   echo "== $repo → /$path/"
 
   # Stable releases that carry both assets, lowest version first. Fetched on
@@ -113,7 +124,7 @@ for package in "${packages[@]}"; do
 
   # /<path>/: the highest stable release overall.
   # shellcheck disable=SC2046 # one tag per word
-  root=$(publish_first "$repo" docs-root.zip "/$path/" "$out/$path" $(sort -rV <<< "$tags"))
+  root=$(publish_first "$repo" docs-root.zip "/$path/" "/$former/" "$out/$path" $(sort -rV <<< "$tags"))
   if [ -z "$root" ]; then
     echo "::warning::$repo has no docs built for /$path/. /$path/ is not published."
     continue
@@ -127,7 +138,7 @@ for package in "${packages[@]}"; do
   majors='[]'
   while read -r major; do
     # shellcheck disable=SC2046
-    tag=$(publish_first "$repo" docs-major.zip "/$path/$major.x/" "$out/$path/$major.x" \
+    tag=$(publish_first "$repo" docs-major.zip "/$path/$major.x/" "/$former/$major.x/" "$out/$path/$major.x" \
       $(grep "^$major\." <<< "$tags" | sort -rV))
     if [ -z "$tag" ]; then continue; fi
     echo "/$path/$major.x/: $tag"
