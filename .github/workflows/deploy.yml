@@ -3,11 +3,9 @@ name: Deploy
 # Deploys site/ to GitHub Pages. site/ is published to this repository from
 # elsewhere, so do not edit it here.
 #
-# Adds the documentation of CucumberSwift and CucumberSwiftExpressions from their
-# release assets (scripts/add-docs.sh). A release in another repository cannot
-# start this workflow with GITHUB_TOKEN, so it also runs every hour, and deploys
-# only when the published versions changed. After a release, run it by hand to
-# publish at once.
+# The documentation is not deployed here: each package publishes its own to its
+# own Pages site, /CucumberSwift/ and /CucumberSwiftExpressions/. This site adds
+# redirects from the old documentation URLs (scripts/add-redirects.sh).
 
 on:
   push:
@@ -15,9 +13,8 @@ on:
     paths:
       - 'site/**'
       - 'scripts/**'
+      - 'redirects/**'
       - '.github/workflows/deploy.yml'
-  schedule:
-    - cron: '17 * * * *'
   workflow_dispatch:
 
 permissions: {}
@@ -32,8 +29,6 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: read
-    outputs:
-      changed: ${{ steps.changed.outputs.changed }}
     steps:
       - name: Check out
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -61,36 +56,17 @@ jobs:
           mkdir _site
           cp -R site/. _site/
 
-      # Reads the public releases of both packages. The token only raises the API rate limit.
-      - name: Add documentation
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: scripts/add-docs.sh _site
-
-      # A scheduled run deploys only if the published versions differ from the live site.
-      - name: Check for changes
-        id: changed
-        env:
-          EVENT: ${{ github.event_name }}
-        run: |
-          changed=true
-          if [ "$EVENT" = schedule ] &&
-             live=$(curl -sf --max-time 30 https://cucumberswift.org/help/versions.json) &&
-             [ "$(jq -S . <<< "$live")" = "$(jq -S . _site/help/versions.json)" ]; then
-            changed=false
-            echo "The published versions are unchanged. Nothing to deploy."
-          fi
-          echo "changed=$changed" >> "$GITHUB_OUTPUT"
+      # Reads the packages' public versions.json. Calls no GitHub API.
+      - name: Add redirects from the old documentation URLs
+        run: scripts/add-redirects.sh _site
 
       - name: Upload
-        if: steps.changed.outputs.changed == 'true'
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: _site
 
   deploy:
     needs: build
-    if: needs.build.outputs.changed == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
