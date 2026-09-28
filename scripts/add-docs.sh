@@ -10,11 +10,15 @@
 #   /<path>/X.x/  the highest stable release of major X
 #   /<path>/      the highest stable release overall
 #
+# <path> is help for CucumberSwift and help/expressions for CucumberSwiftExpressions.
+# The docs used to be served under /docs; every /docs/... page redirects to the
+# same page under /help/.
+#
 # Nothing is rebuilt. A zip that was built for another path is skipped, and the
 # next lower release is used. Releases without the assets are skipped.
 #
 # It also writes redirect pages for the old documentation URLs, a fallback in
-# 404.html, /docs/versions.json, sitemap.xml and robots.txt.
+# 404.html, /help/versions.json, sitemap.xml and robots.txt.
 #
 # Needs gh (with GH_TOKEN), jq, unzip and perl. A failed API call stops the
 # script, so a site with docs missing is never deployed.
@@ -25,8 +29,8 @@ site_url=${SITE_URL:-https://cucumberswift.org}
 
 # repository | path on the site | DocC module | old URL prefixes (space separated; "-" is the site root)
 packages=(
-  "${CUCUMBERSWIFT_REPO:-cucumberswift/CucumberSwift}|docs|cucumberswift|CucumberSwift -"
-  "${EXPRESSIONS_REPO:-cucumberswift/CucumberSwiftExpressions}|docs/expressions|cucumberswiftexpressions|CucumberSwiftExpressions"
+  "${CUCUMBERSWIFT_REPO:-cucumberswift/CucumberSwift}|help|cucumberswift|CucumberSwift -"
+  "${EXPRESSIONS_REPO:-cucumberswift/CucumberSwiftExpressions}|help/expressions|cucumberswiftexpressions|CucumberSwiftExpressions"
 )
 
 work=$(mktemp -d)
@@ -141,7 +145,7 @@ for package in "${packages[@]}"; do
     fi
   done < <(cut -d. -f1 <<< "$tags" | sort -un)
 
-  # Old URLs, e.g. /CucumberSwift/documentation/cucumberswift/ → /docs/documentation/cucumberswift/.
+  # Old URLs, e.g. /CucumberSwift/documentation/cucumberswift/ → /help/documentation/cucumberswift/.
   for prefix in $prefixes; do
     if [ "$prefix" = "-" ]; then legacy=""; else legacy="/$prefix"; fi
     pages "$out/$path" | while read -r page; do
@@ -159,6 +163,20 @@ for package in "${packages[@]}"; do
     '. + [{name: $n, version: $v, path: $p, majors: $m}]' <<< "$versions")
 done
 
+# /docs/... was the documentation path until #161: each page redirects to the same page under /help/.
+if [ -d "$out/help" ]; then
+  (cd "$out/help" && find . -name index.html | sed 's|^\./||; s|index.html$||') | while read -r page; do
+    # If the /help page is itself a redirect (e.g. /help/ itself), go straight to its target.
+    target=$(sed -n 's/.*http-equiv="refresh" content="0; url=\([^"]*\)".*/\1/p' "$out/help/${page}index.html" | head -n 1)
+    redirect_page "$out/docs/${page}index.html" "${target:-/help/$page}"
+  done
+  # Most specific first, so /docs/expressions/ is matched before /docs/.
+  if [ -d "$out/help/expressions" ]; then
+    fallback=("[\"/docs/expressions/\", \"/help/expressions/documentation/cucumberswiftexpressions/\"]" "${fallback[@]}")
+  fi
+  fallback+=("[\"/docs/\", \"/help/documentation/cucumberswift/\"]")
+fi
+
 # Old pages that no longer exist go to their package's documentation.
 if [ ${#fallback[@]} -gt 0 ] && [ -f "$out/404.html" ]; then
   map=$(IFS=,; echo "${fallback[*]}")
@@ -166,8 +184,10 @@ if [ ${#fallback[@]} -gt 0 ] && [ -f "$out/404.html" ]; then
   SCRIPT="$script" perl -0pi -e 's|</body>|$ENV{SCRIPT}\n</body>|' "$out/404.html"
 fi
 
-mkdir -p "$out/docs"
-jq '{packages: .}' <<< "$versions" > "$out/docs/versions.json"
+mkdir -p "$out/help" "$out/docs"
+jq '{packages: .}' <<< "$versions" > "$out/help/versions.json"
+# The landing page read /docs/versions.json before #161.
+cp "$out/help/versions.json" "$out/docs/versions.json"
 
 {
   echo '<?xml version="1.0" encoding="UTF-8"?>'
