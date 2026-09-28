@@ -200,6 +200,8 @@ p code, li code {
 .button--primary:hover { background: var(--action-hover); color: var(--neutral-0); }
 .button--secondary { background: var(--surface-raised); border-color: var(--border-strong); color: var(--text); }
 .button--secondary:hover { background: var(--surface-sunken); color: var(--text); }
+.button--dark { background: var(--neutral-950); color: var(--neutral-0); }
+.button--dark:hover { background: var(--green-800); color: var(--neutral-0); }
 .button--small { min-height: 44px; padding: 0 16px; font-size: 15px; gap: 8px; }
 
 .link-arrow {
@@ -224,6 +226,7 @@ p code, li code {
   font: 600 13px/16px var(--font-sans);
 }
 .badge--green { background: var(--green-100); border-color: var(--green-100); color: var(--green-800); }
+.badge--orange { background: var(--orange-500); border-color: var(--orange-500); color: var(--neutral-950); }
 
 .card {
   background: var(--surface-raised);
@@ -466,6 +469,29 @@ p code, li code {
 
   .split:has(.features) .split__aside { grid-column: span 4; padding-right: 24px; }
   .split:has(.features) > :last-child { grid-column: span 8; }
+}
+
+/* Call for maintainers */
+
+.callout {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  margin-top: 48px;
+  padding: 28px 24px;
+  border-radius: var(--radius-xl);
+  background: var(--orange-50);
+  border: 1px solid var(--orange-200);
+}
+.callout__text { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; max-width: 640px; }
+.callout__title { font: 700 clamp(28px, 22px + 1.2vw, 36px)/1.17 var(--font-display); letter-spacing: -0.01em; }
+.callout p { color: var(--text); }
+.callout .button { white-space: normal; text-align: left; }
+@media (min-width: 640px) { .callout { padding: 40px; } }
+@media (min-width: 960px) {
+  .callout { flex-direction: row; align-items: center; justify-content: space-between; gap: 48px; margin-top: 72px; padding: 48px; }
+  .callout .button { flex-shrink: 0; white-space: nowrap; }
 }
 
 /* How it works */
