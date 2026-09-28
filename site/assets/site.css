@@ -621,7 +621,7 @@ p code, li code {
    13.6 times its font size) stays on one line. The titles share one size. */
 .doc-card__title { font: 700 min(26px, 7.2cqi)/1.25 var(--font-display); overflow-wrap: break-word; }
 .doc-card__text { color: var(--text-secondary); font-size: 16px; line-height: 1.6; }
-.doc-card__path { margin-top: auto; color: var(--action); font: 500 13px/16px var(--font-mono); }
+.doc-card__link { margin-top: auto; color: var(--action); font-weight: 600; font-size: 15px; line-height: 20px; }
 
 .versions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
 .version {
