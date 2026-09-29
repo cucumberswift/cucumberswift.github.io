@@ -134,7 +134,7 @@ if (latestVersion) {
   readVersions(latestVersion.dataset.versions)
     .then(({ version }) => {
       if (!isVersion(version)) return;
-      latestVersion.textContent = `Latest version ${version}`;
+      latestVersion.querySelector('.latest-version__label').textContent = `Latest version ${version}`;
       latestVersion.href = `https://github.com/cucumberswift/CucumberSwift/releases/tag/${version}`;
     })
     .catch(() => {});
