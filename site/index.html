@@ -87,6 +87,7 @@
           <li>macOS 10.15+</li>
           <li>tvOS 13+</li>
         </ul>
+        <a class="badge badge--green latest-version" href="https://github.com/cucumberswift/CucumberSwift/releases/latest" data-versions="/CucumberSwift/versions.json">Latest version</a>
       </div>
 
       <div class="hero__code">
@@ -235,33 +236,37 @@ targets: [
       <div class="section__head">
         <p class="eyebrow">Documentation</p>
         <h2 class="section__title" id="docs-title">Read the docs</h2>
-        <p class="body-2">The docs follow the latest stable release. Every major version keeps its own copy.</p>
+        <p class="body-2">The docs follow the latest stable release. Every major version keeps its own copy: pick one next to each library.</p>
       </div>
       <div class="doc-cards">
-        <a class="card card--link doc-card doc-card--raised" href="/CucumberSwift/documentation/cucumberswift/" target="_blank" rel="noopener">
-          <span class="doc-card__top"><span class="badge badge--green">Latest stable</span>
-            <svg class="doc-card__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-          <span class="doc-card__title">CucumberSwift</span>
-          <span class="doc-card__text">Tutorials for SPM and Carthage, step matching, hooks, reports and the full API reference.</span>
-          <span class="doc-card__link">View the documentation</span>
-          <span class="visually-hidden"> (opens in a new tab)</span>
-        </a>
-        <a class="card card--link doc-card" href="/CucumberSwiftExpressions/documentation/cucumberswiftexpressions/" target="_blank" rel="noopener">
-          <span class="doc-card__top"><span class="badge">Companion library</span>
-            <svg class="doc-card__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
-          <span class="doc-card__title">CucumberSwiftExpressions</span>
-          <span class="doc-card__text">The Cucumber Expressions parser behind step matching, and how to write custom parameters.</span>
-          <span class="doc-card__link">View the documentation</span>
-          <span class="visually-hidden"> (opens in a new tab)</span>
-        </a>
-        <div class="card doc-card">
-          <span class="doc-card__top"><span class="badge">Older versions</span></span>
-          <h3 class="doc-card__title">Docs by major version</h3>
-          <span class="doc-card__text">Pinned to an older release? Each major keeps the docs of its latest release.</span>
-          <!-- The published versions are listed in /CucumberSwift/versions.json (cucumberswift/CucumberSwift#175). -->
-          <ul class="versions">
-            <li><a class="version" href="/CucumberSwift/5.x/documentation/cucumberswift/" target="_blank" rel="noopener">5.x<span class="visually-hidden"> (opens in a new tab)</span></a></li>
-          </ul>
+        <div class="card doc-card doc-card--raised" data-versions="/CucumberSwift/versions.json" data-module="cucumberswift">
+          <span class="doc-card__top"><span class="badge badge--green doc-card__latest">Latest stable</span></span>
+          <h3 class="doc-card__title"><a href="/CucumberSwift/documentation/cucumberswift/" target="_blank" rel="noopener">CucumberSwift<span class="visually-hidden"> (opens in a new tab)</span></a></h3>
+          <p class="doc-card__text">Tutorials for SPM and Carthage, step matching, hooks, reports and the full API reference.</p>
+          <div class="doc-card__links">
+            <a class="doc-card__link" href="/CucumberSwift/documentation/cucumberswift/" target="_blank" rel="noopener">View the documentation<span class="visually-hidden"> (opens in a new tab)</span></a>
+            <details class="version-menu">
+              <summary><span class="version-menu__current">v5.x</span><span class="visually-hidden">: CucumberSwift docs version</span></summary>
+              <ul class="versions" aria-label="CucumberSwift docs by major version">
+            <li><a class="version" aria-current="true" href="/CucumberSwift/5.x/documentation/cucumberswift/" target="_blank" rel="noopener">v5.x<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+              </ul>
+            </details>
+          </div>
+        </div>
+        <div class="card doc-card" data-versions="/CucumberSwiftExpressions/versions.json" data-module="cucumberswiftexpressions">
+          <span class="doc-card__top"><span class="badge">Companion library</span><span class="badge badge--green doc-card__latest">Latest stable</span></span>
+          <h3 class="doc-card__title"><a href="/CucumberSwiftExpressions/documentation/cucumberswiftexpressions/" target="_blank" rel="noopener">CucumberSwiftExpressions<span class="visually-hidden"> (opens in a new tab)</span></a></h3>
+          <p class="doc-card__text">The Cucumber Expressions parser behind step matching, and how to write custom parameters.</p>
+          <div class="doc-card__links">
+            <a class="doc-card__link" href="/CucumberSwiftExpressions/documentation/cucumberswiftexpressions/" target="_blank" rel="noopener">View the documentation<span class="visually-hidden"> (opens in a new tab)</span></a>
+            <details class="version-menu">
+              <summary><span class="version-menu__current">v1.x</span><span class="visually-hidden">: CucumberSwiftExpressions docs version</span></summary>
+              <ul class="versions" aria-label="CucumberSwiftExpressions docs by major version">
+            <li><a class="version" aria-current="true" href="/CucumberSwiftExpressions/1.x/documentation/cucumberswiftexpressions/" target="_blank" rel="noopener">v1.x<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+            <li><a class="version" href="/CucumberSwiftExpressions/0.x/documentation/cucumberswiftexpressions/" target="_blank" rel="noopener">v0.x<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+              </ul>
+            </details>
+          </div>
         </div>
       </div>
     </div>

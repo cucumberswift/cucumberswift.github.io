@@ -115,3 +115,78 @@ if (navigator.clipboard) {
     });
   }
 }
+
+// Versions. Each package's docs publish /<package>/versions.json on every
+// release, so the numbers and the major links update with no change here. If a
+// file cannot be read, the page keeps what its HTML says.
+const versionFiles = new Map();
+const readVersions = (url) => {
+  if (!versionFiles.has(url)) {
+    versionFiles.set(url, fetch(url).then((response) => (response.ok ? response.json() : Promise.reject(response.status))));
+  }
+  return versionFiles.get(url);
+};
+const isVersion = (value) => typeof value === 'string' && /^\d+\.\d+\.\d+$/.test(value);
+
+// Latest version chip in the hero.
+const latestVersion = document.querySelector('.latest-version[data-versions]');
+if (latestVersion) {
+  readVersions(latestVersion.dataset.versions)
+    .then(({ version }) => {
+      if (!isVersion(version)) return;
+      latestVersion.textContent = `Latest version ${version}`;
+      latestVersion.href = `https://github.com/cucumberswift/CucumberSwift/releases/tag/${version}`;
+    })
+    .catch(() => {});
+}
+
+// Docs cards: the latest version, and one link per major, newest first.
+for (const card of document.querySelectorAll('.doc-card[data-versions]')) {
+  const url = card.dataset.versions;
+  const base = url.slice(0, url.lastIndexOf('/') + 1);
+  readVersions(url)
+    .then(({ version, majors }) => {
+      if (isVersion(version)) card.querySelector('.doc-card__latest').textContent = `Latest ${version}`;
+      const found = (Array.isArray(majors) ? majors : [])
+        .filter((m) => /^\d+\.x$/.test(m.major) && isVersion(m.version))
+        .sort((a, b) => parseInt(b.major, 10) - parseInt(a.major, 10));
+      if (found.length === 0) return;
+      // The latest release's major is selected; without it, the newest major.
+      const latestMajor = isVersion(version) ? `${parseInt(version, 10)}.x` : found[0].major;
+      const current = found.some((m) => m.major === latestMajor) ? latestMajor : found[0].major;
+      const label = card.querySelector('.version-menu__current');
+      if (label) label.textContent = `v${current}`;
+      const list = card.querySelector('.versions');
+      list.replaceChildren(...found.map((m) => {
+        const link = document.createElement('a');
+        link.className = 'version';
+        if (m.major === current) link.setAttribute('aria-current', 'true');
+        link.href = `${base}${m.major}/documentation/${card.dataset.module}/`;
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.textContent = `v${m.major}`;
+        const hint = document.createElement('span');
+        hint.className = 'visually-hidden';
+        hint.textContent = ' (opens in a new tab)';
+        link.append(hint);
+        const item = document.createElement('li');
+        item.append(link);
+        return item;
+      }));
+    })
+    .catch(() => {});
+}
+
+// Version menus close on Escape or a click outside, like any other menu.
+const versionMenus = document.querySelectorAll('.version-menu');
+document.addEventListener('click', (event) => {
+  for (const menu of versionMenus) if (menu.open && !menu.contains(event.target)) menu.open = false;
+});
+document.addEventListener('keydown', (event) => {
+  if (event.key !== 'Escape') return;
+  for (const menu of versionMenus) {
+    if (!menu.open) continue;
+    menu.open = false;
+    menu.querySelector('summary').focus();
+  }
+});
