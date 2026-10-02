@@ -140,6 +140,14 @@ if (latestVersion) {
     .catch(() => {});
 }
 
+// Install snippet: depend on the latest release. Without it, the HTML names
+// the first release of the latest major.
+for (const install of document.querySelectorAll('.install-version[data-versions]')) {
+  readVersions(install.dataset.versions)
+    .then(({ version }) => { if (isVersion(version)) install.textContent = version; })
+    .catch(() => {});
+}
+
 // Docs cards: the latest version, and one link per major, newest first.
 for (const card of document.querySelectorAll('.doc-card[data-versions]')) {
   const url = card.dataset.versions;
@@ -173,6 +181,20 @@ for (const card of document.querySelectorAll('.doc-card[data-versions]')) {
         item.append(link);
         return item;
       }));
+    })
+    .catch(() => {});
+}
+
+// Samples card. The samples on main follow the latest CucumberSwift release,
+// so they are for its major. Older samples are listed in the HTML.
+for (const card of document.querySelectorAll('.doc-card[data-samples-versions]')) {
+  readVersions(card.dataset.samplesVersions)
+    .then(({ version }) => {
+      if (!isVersion(version)) return;
+      const major = `v${parseInt(version, 10)}.x`;
+      card.querySelector('.doc-card__samples-for').textContent = `For CucumberSwift ${major}`;
+      card.querySelector('.version-menu__current').textContent = major;
+      card.querySelector('.samples-current__label').textContent = major;
     })
     .catch(() => {});
 }
