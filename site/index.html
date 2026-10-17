@@ -102,15 +102,14 @@
         </figure>
         <figure class="code code--dark">
           <figcaption class="code__bar"><span class="code__dot code__dot--orange" aria-hidden="true"></span>CheckoutSteps.swift</figcaption>
-<pre><code><span class="t-kw">Given</span>(<span class="t-str">"I have {int} items in my cart"</span>) { match, _ <span class="t-key">in</span>
-    cart.fill(with: <span class="t-key">try</span> match.first(\.int))
+<pre><code><span class="t-kw">#Given</span>(<span class="t-str">"I have {int} items in my cart"</span>) { (count: Int) <span class="t-key">in</span>
+    cart.fill(with: count)
 }
-<span class="t-kw">When</span>(<span class="t-str">"I pay with my saved card"</span>) { _, _ <span class="t-key">in</span>
+<span class="t-kw">#When</span>(<span class="t-str">"I pay with my saved card"</span>) {
     checkout.payWithSavedCard()
 }
-<span class="t-kw">Then</span>(<span class="t-str">"I see {string}"</span>) { match, _ <span class="t-key">in</span>
-    XCTAssertEqual(banner.text,
-                   <span class="t-key">try</span> match.first(\.string))
+<span class="t-kw">#Then</span>(<span class="t-str">"I see {string}"</span>) { (message: String) <span class="t-key">in</span>
+    XCTAssertEqual(banner.text, message)
 }</code></pre>
         </figure>
       </div>
@@ -132,7 +131,7 @@
         <li class="card step">
           <span class="step__number" aria-hidden="true">2</span>
           <h3 class="step__title">Match each step</h3>
-          <p>Bind steps with <code>Given</code>, <code>When</code> and <code>Then</code>, using Cucumber Expressions with type-safe parameters, or regular expressions.</p>
+          <p>Bind steps with the <code>#Given</code>, <code>#When</code> and <code>#Then</code> macros, using Cucumber Expressions or regular expressions. Each parameter arrives as a typed closure argument, and the macros check the expression and the closure's arguments at compile time. The <code>Given</code>, <code>When</code> and <code>Then</code> functions still work. <a href="/CucumberSwift/documentation/cucumberswift/using-step-definition-macros" target="_blank" rel="noopener">Using the macros<span class="visually-hidden"> (opens in a new tab)</span></a> starts with <a href="/CucumberSwift/documentation/cucumberswift/using-step-definition-macros#Set-up-a-Swift-package" target="_blank" rel="noopener">turning on the <code>Macros</code> package trait<span class="visually-hidden"> (opens in a new tab)</span></a>.</p>
         </li>
         <li class="card step">
           <span class="step__number step__number--red" aria-hidden="true">3</span>
